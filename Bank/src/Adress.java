@@ -4,7 +4,7 @@ public class Adress {
     private String street;
     private String city;
     private String state;
-    private int postalCode;
+    private String postalCode;
 
 
     public Adress setCity(String city) {
@@ -26,23 +26,25 @@ public class Adress {
         this.state = state;
         return this;
     }
-    public Adress setPostalCode(int postalCode){
+    public Adress setPostalCode(String postalCode){
         this.postalCode = postalCode;
         return this;
     }
-    private boolean isReqFilled(){
+
+    //country + city + street are the least requirments.
+    public boolean isReqFilled(){
         if(country != null && city != null && street !=null){
             return true;
         }
         return false;
     }
-    public String printAsLabel(){
+    public String toStringAsLabel(){
         if(isReqFilled()){
-            return "Country: " + country+
-                    " State: " + state+
-                    " City: " + city+
-                    " Street: "+ street+
-                    " Postal Code: " + postalCode;
+            return  "Country: " + country+
+                    "\nState: " + state+
+                    "\nCity: " + city+
+                    "\nStreet: "+ street+
+                    "\nPostal Code: " + postalCode;
         }
         return "Requirement is not found";
     }

@@ -6,6 +6,7 @@ public class User extends Person{
     private int salary;
     private String emailByFirst;
     private String fullEmail;
+    private Adress adress = new Adress();
 
     //Email Variables
     private String emailKeys;
@@ -16,20 +17,18 @@ public class User extends Person{
     String[] keys = {outlook, gmail, hotmail, yahoo};
 
     //default is silver
-    private String memberShip = "silver";
+    private String memberShip = "Silver";
     private int loanType;
 
 
-    User(String fName, String lName, String emailByFirst,
-         String emailKeys, String phoneNumber, int id, int salary) {
-
+    User(String fName, String lName, String emailByFirst, String emailKeys, String phoneNumber, int id, int salary){
         super(fName, lName, phoneNumber);
         this.id = id;
         this.emailKeys = emailKeys;
         this.emailByFirst = emailByFirst;
         this.salary = salary;
         super.updateReqValid(false);
-
+        autoSetMemberShip();
         for (String key : keys) {
             if (emailKeys.equals(key)) {
                 fullEmail = emailByFirst + key;
@@ -79,38 +78,51 @@ public class User extends Person{
         return this;
     }
 
-    //trying to add comment!
-
-    public boolean isEligableForLoan(){
-        if(getSalary() < 5400){
-            return false;
+    public boolean autoSetMemberShip(){
+        if(getSalary() > 5000 && getSalary() < 7999){
+            loanType = 30;
+            return true;
         }
         else if(getSalary() > 8000 && getSalary() < 11999){
             setMemberShip("Gold");
-            loanType = 30;
+            loanType = 35;
             return true;
-
-        } else if(getSalary() > 12000){
+        } 
+        else if(getSalary() > 12000 && getSalary() < 20000){
             setMemberShip("Platinum");
             loanType = 40;
+            return true;
+        } 
+        else if(getSalary() >= 20000){
+            setMemberShip("Signature");
+            loanType = 45;
             return true;
         }
         return false;
     }
 
-    public String displayUserInfo(){
-        if(super.getIsReqValid() == true){
-            return
-                    "Name: " + getFullName() + " \n" + "Email: " + getFullEmail() + "\n"
-                            + "PhoneNumber: " + getPhoneNumber() + "\n" + "ID: " + getId() + "\n" + "Salary: " + getSalary()
-                            + "\n" + "Membership: " + getMemberShip();
-        }else{
-            return null;
-        }
-
+    //display scanner to add adress
+    public void addressInfo(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("write adress as given:\nCOUNTRY, CITY, STREET:");
+        String country = scanner.nextLine();
+        String city = scanner.nextLine();
+        String street = scanner.nextLine();
+        adress.setCountry(country).setCity(city).setStreet(street);
     }
 
+    public void adressAdderManual(String country, String city, String state, String street, String postalCode){
+        adress.setCountry(country).setCity(city).setState(state).setStreet(street).setPostalCode(postalCode);
+    }
+
+    //another signature so we can only use the required values only
+    public void adressAdderManual(String country, String city, String street){
+        adress.setCountry(country).setCity(city).setState(null).setStreet(street).setPostalCode(null);
+    }
+
+    //static so we can create a user without an instance of User.
     public static User cretaionOfUser(){
+        try{
         Scanner scanner = new Scanner(System.in);
         System.out.println("Would you like to create a new user?");
         String answer = scanner.nextLine();
@@ -121,8 +133,34 @@ public class User extends Person{
             scanner.close();
             return u;
         }
-        scanner.close();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
         return null;
     }
+
+    //display with no adress
+    public String displayBasicUserInfo(){
+        if(super.getIsReqValid()){
+            return
+                    "Name: " + getFullName() + " \n" + "Email: " + getFullEmail() + "\n"
+                            + "PhoneNumber: " + getPhoneNumber() + "\n" + "ID: " + getId() + "\n" + "Salary: " + getSalary()
+                            + "\n" + "Membership: " + getMemberShip() + "\n";
+        }else{
+            return null;
+        }
+
+    }
+
+    //display with adress
+    public String displayUserInfo(){
+        if(super.getIsReqValid() && adress.isReqFilled()){
+            return displayBasicUserInfo() + adress.toStringAsLabel();
+        }
+        else {
+            return null;
+        }
+    }
+
 
 }
